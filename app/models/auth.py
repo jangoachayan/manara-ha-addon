@@ -1,14 +1,6 @@
 from __future__ import annotations
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict
-
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-    model_config = ConfigDict(
-        frozen=True,
-        populate_by_name=True,
-    )
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -29,10 +21,21 @@ class RefreshRequest(BaseModel):
         populate_by_name=True,
     )
 
-class UserPublic(BaseModel):
+class PairRequest(BaseModel):
+    pairing_code: str
+    device_id: str
+    device_name: str
+
+    model_config = ConfigDict(
+        frozen=True,
+        populate_by_name=True,
+    )
+
+class DeviceInfo(BaseModel):
     id: int
-    username: str
-    is_active: bool
+    device_id: str
+    device_name: str
+    paired_at: datetime
 
     model_config = ConfigDict(
         frozen=True,
