@@ -8,6 +8,8 @@ boot: auto
 init: false
 ports:
   8000/tcp: 8000
+ingress: true
+ingress_port: 8000
 options:
   log_level: "info"
   secret_key: ""
