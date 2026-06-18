@@ -1,5 +1,5 @@
 name: "Manara Backend"
-version: "0.3.0"
+version: "0.3.1"
 slug: "manara_backend"
 description: "Manara smart building automation backend"
 arch: [amd64]

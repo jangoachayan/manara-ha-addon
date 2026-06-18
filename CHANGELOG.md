@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1] - 2026-06-18
+
+### Added
+- Ingress web UI at / showing QR code for device pairing
+- Health and API docs links on the ingress page
+
 ## [0.3.0] - 2026-06-18
 
 ### Added
