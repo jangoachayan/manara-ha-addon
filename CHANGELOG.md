@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0] - 2026-06-18
+
+### Added
+- POST /auth/pair endpoint: validates QR pairing code, registers device, issues JWT
+  access and refresh tokens
+- GET /auth/qr endpoint: generates a new pairing code and returns it as a PNG QR
+  image encoding {mdns, remote, code} payload
+- app/main.py: FastAPI lifespan wiring init_db() on startup, auth router included
+
 ## [0.2.0] - 2026-06-16
 
 ### Added
