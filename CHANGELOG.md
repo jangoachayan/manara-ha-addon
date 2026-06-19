@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.4] - 2026-06-19
+
+### Debug
+- Added error logging to /devices/states for diagnosing 502 errors
+
 ## [0.3.3] - 2026-06-19
 
 ### Added
