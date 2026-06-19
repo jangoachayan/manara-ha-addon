@@ -27,3 +27,6 @@ qrcode==8.2
 pillow==12.2.0
 h11==0.16.0
 six==1.17.0
+httpx==0.28.1
+httpcore==1.0.9
+certifi==2026.5.20
