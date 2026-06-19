@@ -44,13 +44,13 @@ HTML_CONTENT = """<!DOCTYPE html>
         <section class="pair-device">
             <h2>Pair a Device</h2>
             <p>Scan this QR code with the Manara app to pair your device. The code expires in 10 minutes.</p>
-            <img src="/auth/qr" width="256" height="256" alt="Pairing QR code">
+            <a href="auth/qr" target="_blank" rel="noopener"><button type="button">Show QR Code</button></a>
             <button onclick="window.location.reload()">Refresh</button>
         </section>
         <section class="status">
             <h2>Status</h2>
-            <a href="/health" target="_blank">Health</a>
-            <a href="/docs" target="_blank">API Docs</a>
+            <a href="health" target="_blank">Health</a>
+            <a href="docs" target="_blank">API Docs</a>
         </section>
     </div>
 </body>
