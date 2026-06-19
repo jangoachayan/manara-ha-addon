@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6] - 2026-06-19
+
+### Added
+- GET /devices/areas endpoint: entity-to-area-name mapping via HA's WebSocket
+  registry API (area_registry, device_registry, entity_registry), with
+  entity-level area_id taking precedence over device-level assignment
+
 ## [0.3.5] - 2026-06-19
 
 ### Fixed
