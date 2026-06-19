@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5] - 2026-06-19
+
+### Fixed
+- Added homeassistant_api: true to config.yaml -- /devices/states was returning
+  401 Unauthorized from Supervisor because the addon lacked permission to call
+  the Home Assistant Core API
+
 ## [0.3.4] - 2026-06-19
 
 ### Debug
