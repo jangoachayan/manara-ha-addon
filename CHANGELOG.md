@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2] - 2026-06-18
+
+### Fixed
+- Ingress page QR code was broken when viewed through HA's ingress proxy (absolute
+  paths bypassed the proxy's path prefix). Replaced inline QR <img> with a "Show QR
+  Code" button opening /auth/qr in a new tab, using relative paths throughout.
+
 ## [0.3.1] - 2026-06-18
 
 ### Added
