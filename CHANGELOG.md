@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3] - 2026-06-19
+
+### Added
+- GET /devices/states endpoint: returns all HA entity states (JWT protected)
+- app/core/ha_client.py: REST client for HA Supervisor API
+- app/core/auth_dependency.py: JWT bearer token dependency for protected routes
+
 ## [0.3.2] - 2026-06-18
 
 ### Fixed
