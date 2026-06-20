@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.9] - 2026-06-19
+
+### Added
+- Custom entity groups: EntityGroup/GroupMembership tables, CRUD functions
+  in app/core/groups.py
+- GET /devices/groups endpoint: returns custom groups with entity memberships
+  for the mobile app
+- Manage Groups admin UI on the ingress page: create groups, assign
+  entities, accessible via /admin/groups endpoints (ingress-only, no JWT)
+
 ## [0.3.8] - 2026-06-19
 
 ### Added
