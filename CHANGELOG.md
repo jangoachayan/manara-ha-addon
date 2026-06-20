@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.7] - 2026-06-19
+
+### Added
+- POST /devices/{entity_id}/toggle endpoint: toggles a switch entity via HA's
+  service API (switch.turn_on / switch.turn_off based on current state)
+- app/core/ha_client.py: call_service() for executing HA service calls
+
 ## [0.3.6] - 2026-06-19
 
 ### Added
