@@ -2,9 +2,12 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 import httpx
+from sqlmodel import Session
 from app.core.auth_dependency import get_current_device
 from app.core.ha_client import get_states, get_state, call_service
 from app.core.ha_registry import get_entity_area_map
+from app.core.groups import get_groups_with_entities
+from app.db.database import get_session
 
 logger = logging.getLogger(__name__)
 
@@ -44,3 +47,11 @@ async def toggle_device(entity_id: str, device_id: str = Depends(get_current_dev
     except (httpx.HTTPError, Exception) as e:
         logger.error(f"HA toggle call failed: {e}")
         raise HTTPException(status_code=502, detail='Unable to reach Home Assistant') from e
+
+@router.get('/groups')
+async def get_groups(device_id: str = Depends(get_current_device), session: Session = Depends(get_session)) -> dict[str, list[str]]:
+    try:
+        return get_groups_with_entities(session)
+    except Exception as e:
+        logger.error(f"Failed to retrieve groups: {e}")
+        raise HTTPException(status_code=500, detail='Unable to retrieve groups') from e
