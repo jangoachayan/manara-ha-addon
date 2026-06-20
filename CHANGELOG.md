@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.8] - 2026-06-19
+
+### Added
+- WebSocket /ws endpoint: live push of HA state_changed events to connected
+  mobile clients, JWT-authenticated via query token, 10-connection limit
+- app/core/event_bus.py: in-process pub/sub for broadcasting state changes
+- app/core/ha_websocket.py: background listener subscribing to HA's
+  state_changed events with threshold-based filtering for sensor entities
+  (only publishes when value changes by more than a configured delta)
+- Background WebSocket listener now starts automatically on addon startup
+
 ## [0.3.7] - 2026-06-19
 
 ### Added
