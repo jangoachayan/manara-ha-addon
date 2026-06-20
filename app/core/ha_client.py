@@ -20,3 +20,13 @@ async def get_state(entity_id: str) -> dict:
         response = await client.get(f'{HA_BASE_URL}/states/{entity_id}', headers=_get_headers(), timeout=10.0)
         response.raise_for_status()
         return response.json()
+
+async def call_service(domain: str, service: str, entity_id: str) -> None:
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f'{HA_BASE_URL}/services/{domain}/{service}',
+            headers=_get_headers(),
+            json={'entity_id': entity_id},
+            timeout=10.0,
+        )
+        response.raise_for_status()
