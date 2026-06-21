@@ -28,3 +28,4 @@ class GroupMembership(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     group_id: int = Field(foreign_key='entitygroup.id', index=True)
     entity_id: str = Field(index=True)
+    display_order: int = Field(default=0)
