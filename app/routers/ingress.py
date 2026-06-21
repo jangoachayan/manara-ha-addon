@@ -65,6 +65,10 @@ HTML_CONTENT = """<!DOCTYPE html>
             margin: 0 0 8px;
             padding-left: 20px;
         }
+        .entity-search {
+            display: block;
+            margin-bottom: 6px;
+        }
     </style>
 </head>
 <body>
@@ -134,6 +138,14 @@ HTML_CONTENT = """<!DOCTYPE html>
                     option.textContent = entityId;
                     select.appendChild(option);
                 });
+
+                const searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.id = `entity-search-${group.id}`;
+                searchInput.className = 'entity-search';
+                searchInput.placeholder = 'Search entities...';
+                searchInput.oninput = () => filterEntityOptions(searchInput.value, select);
+                groupDiv.appendChild(searchInput);
                 groupDiv.appendChild(select);
 
                 const addButton = document.createElement('button');
@@ -143,6 +155,15 @@ HTML_CONTENT = """<!DOCTYPE html>
                 groupDiv.appendChild(addButton);
 
                 container.appendChild(groupDiv);
+            });
+        }
+
+        function filterEntityOptions(searchTerm, selectElement) {
+            const term = searchTerm.toLowerCase();
+            Array.from(selectElement.options).forEach((option) => {
+                const matches = option.value.toLowerCase().includes(term)
+                    || option.textContent.toLowerCase().includes(term);
+                option.style.display = matches ? '' : 'none';
             });
         }
 
