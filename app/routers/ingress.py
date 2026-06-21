@@ -80,6 +80,25 @@ HTML_CONTENT = """<!DOCTYPE html>
             margin: 0 0 8px;
             padding-left: 20px;
         }
+        .group-card li {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .group-card li span {
+            flex: 1;
+        }
+        .group-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .group-header h3 {
+            margin: 0;
+            flex: 1;
+        }
         .entity-search {
             display: block;
             margin-bottom: 6px;
@@ -134,15 +153,30 @@ HTML_CONTENT = """<!DOCTYPE html>
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'group-card';
 
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'group-header';
+
                 const heading = document.createElement('h3');
                 heading.textContent = group.name;
-                groupDiv.appendChild(heading);
+                headerDiv.appendChild(heading);
+
+                const renameButton = document.createElement('button');
+                renameButton.type = 'button';
+                renameButton.textContent = 'Rename';
+                renameButton.onclick = () => startRenameGroup(group.id, headerDiv, heading, renameButton);
+                headerDiv.appendChild(renameButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => handleDeleteGroupClick(group.id, deleteButton);
+                headerDiv.appendChild(deleteButton);
+
+                groupDiv.appendChild(headerDiv);
 
                 const entityList = document.createElement('ul');
-                entityIds.forEach((entityId) => {
-                    const li = document.createElement('li');
-                    li.textContent = entityId;
-                    entityList.appendChild(li);
+                entityIds.forEach((entityId, index) => {
+                    entityList.appendChild(buildEntityListItem(group.id, entityId, entityIds, index));
                 });
                 groupDiv.appendChild(entityList);
 
@@ -171,6 +205,111 @@ HTML_CONTENT = """<!DOCTYPE html>
 
                 container.appendChild(groupDiv);
             });
+        }
+
+        function buildEntityListItem(groupId, entityId, entityIds, index) {
+            const li = document.createElement('li');
+
+            const label = document.createElement('span');
+            label.textContent = entityId;
+            li.appendChild(label);
+
+            const upButton = document.createElement('button');
+            upButton.type = 'button';
+            upButton.textContent = '↑';
+            if (index === 0) {
+                upButton.style.display = 'none';
+            } else {
+                upButton.onclick = () => moveEntity(groupId, entityIds, index, index - 1);
+            }
+            li.appendChild(upButton);
+
+            const downButton = document.createElement('button');
+            downButton.type = 'button';
+            downButton.textContent = '↓';
+            if (index === entityIds.length - 1) {
+                downButton.style.display = 'none';
+            } else {
+                downButton.onclick = () => moveEntity(groupId, entityIds, index, index + 1);
+            }
+            li.appendChild(downButton);
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.textContent = 'Remove';
+            removeButton.onclick = () => removeEntityFromGroup(groupId, entityId);
+            li.appendChild(removeButton);
+
+            return li;
+        }
+
+        function handleDeleteGroupClick(groupId, button) {
+            if (button.dataset.confirming === 'true') {
+                clearTimeout(Number(button.dataset.timeoutId));
+                deleteGroup(groupId);
+                return;
+            }
+
+            const originalText = button.textContent;
+            button.dataset.confirming = 'true';
+            button.textContent = 'Confirm Delete?';
+            const timeoutId = setTimeout(() => {
+                button.textContent = originalText;
+                button.dataset.confirming = 'false';
+            }, 3000);
+            button.dataset.timeoutId = String(timeoutId);
+        }
+
+        async function deleteGroup(groupId) {
+            await fetch(`admin/groups/${groupId}`, { method: 'DELETE' });
+            loadGroupsData();
+        }
+
+        function startRenameGroup(groupId, headerDiv, heading, renameButton) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = heading.textContent;
+
+            const saveButton = document.createElement('button');
+            saveButton.type = 'button';
+            saveButton.textContent = 'Save';
+            saveButton.onclick = () => saveGroupName(groupId, input.value.trim());
+
+            headerDiv.replaceChild(input, heading);
+            renameButton.style.display = 'none';
+            headerDiv.appendChild(saveButton);
+            input.focus();
+        }
+
+        async function saveGroupName(groupId, newName) {
+            if (!newName) return;
+
+            await fetch(`admin/groups/${groupId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newName }),
+            });
+
+            loadGroupsData();
+        }
+
+        async function removeEntityFromGroup(groupId, entityId) {
+            await fetch(`admin/groups/${groupId}/entities/${entityId}`, { method: 'DELETE' });
+            loadGroupsData();
+        }
+
+        async function moveEntity(groupId, entityIds, fromIndex, toIndex) {
+            const newOrder = entityIds.slice();
+            const [moved] = newOrder.splice(fromIndex, 1);
+            newOrder.splice(toIndex, 0, moved);
+
+            await fetch(`admin/groups/${groupId}/reorder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entity_id_order: newOrder }),
+            });
+
+            loadGroupsData();
         }
 
         function filterEntityOptions(searchTerm, selectElement) {
