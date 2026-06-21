@@ -1,9 +1,18 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from app.core.groups import list_groups, get_groups_with_entities, create_group, add_entity_to_group
+from app.core.groups import (
+    list_groups,
+    get_groups_with_entities,
+    create_group,
+    add_entity_to_group,
+    remove_entity_from_group,
+    delete_group,
+    update_group_name,
+    reorder_group_entities,
+)
 from app.core.ha_client import get_states
 from app.db.database import get_session
 
@@ -14,6 +23,12 @@ class CreateGroupRequest(BaseModel):
 
 class AddEntityRequest(BaseModel):
     entity_id: str
+
+class UpdateGroupRequest(BaseModel):
+    name: str
+
+class ReorderRequest(BaseModel):
+    entity_id_order: list[str]
 
 HTML_CONTENT = """<!DOCTYPE html>
 <html lang="en">
@@ -235,3 +250,45 @@ async def add_entity_to_group_endpoint(
 ) -> dict:
     membership = add_entity_to_group(session, group_id, request.entity_id)
     return {'id': membership.id, 'group_id': membership.group_id, 'entity_id': membership.entity_id}
+
+
+@router.delete('/admin/groups/{group_id}')
+async def delete_group_endpoint(
+    group_id: int,
+    session: Session = Depends(get_session),
+) -> dict:
+    delete_group(session, group_id)
+    return {'status': 'deleted'}
+
+
+@router.patch('/admin/groups/{group_id}')
+async def update_group_name_endpoint(
+    group_id: int,
+    request: UpdateGroupRequest,
+    session: Session = Depends(get_session),
+) -> dict:
+    try:
+        group = update_group_name(session, group_id, request.name)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail='Group not found') from e
+    return {'id': group.id, 'name': group.name}
+
+
+@router.delete('/admin/groups/{group_id}/entities/{entity_id}')
+async def remove_entity_from_group_endpoint(
+    group_id: int,
+    entity_id: str,
+    session: Session = Depends(get_session),
+) -> dict:
+    remove_entity_from_group(session, group_id, entity_id)
+    return {'status': 'removed'}
+
+
+@router.post('/admin/groups/{group_id}/reorder')
+async def reorder_group_entities_endpoint(
+    group_id: int,
+    request: ReorderRequest,
+    session: Session = Depends(get_session),
+) -> dict:
+    reorder_group_entities(session, group_id, request.entity_id_order)
+    return {'status': 'reordered'}
