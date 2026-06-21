@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.12] - 2026-06-19
+
+### Added
+- GET /devices/{entity_id}/stream endpoint: proxies HA's camera_proxy_stream
+  via the addon's own Supervisor token, enabling MJPEG live camera feeds in
+  the mobile app without exposing personal HA access tokens to the client
+- app/core/ha_client.py: stream_camera() for long-lived streaming connections
+
 ## [0.3.11] - 2026-06-19
 
 ### Added
