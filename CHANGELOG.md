@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.11] - 2026-06-19
+
+### Added
+- Manage Groups UI: delete group (inline confirm), rename group, remove
+  individual entities, reorder entities via up/down arrows
+- Backend: delete_group, update_group_name, reorder_group_entities in
+  app/core/groups.py; GroupMembership.display_order field; corresponding
+  admin endpoints (DELETE/PATCH /admin/groups/{id}, DELETE .../entities/{id},
+  POST .../reorder)
+
 ## [0.3.10] - 2026-06-19
 
 ### Added
