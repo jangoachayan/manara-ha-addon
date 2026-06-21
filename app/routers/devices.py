@@ -62,8 +62,12 @@ async def get_groups(device_id: str = Depends(get_current_device), session: Sess
 async def stream_device(entity_id: str, device_id: str = Depends(get_current_device)) -> StreamingResponse:
     try:
         response = await stream_camera(entity_id)
+        logger.info(f"stream_device: status={response.status_code}, "
+                    f"content-type={response.headers.get('content-type')}, "
+                    f"entity_id={entity_id}")
     except httpx.HTTPError as e:
         logger.error(f"HA stream call failed: {e}")
+        logger.error(f"stream_device exception detail: type={type(e).__name__}, message={e!r}")
         raise HTTPException(status_code=502, detail='Unable to reach Home Assistant') from e
 
     media_type = response.headers.get('content-type', 'multipart/x-mixed-replace')

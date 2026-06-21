@@ -32,7 +32,15 @@ async def call_service(domain: str, service: str, entity_id: str) -> None:
         response.raise_for_status()
 
 async def stream_camera(entity_id: str) -> httpx.Response:
+    url = f'{HA_BASE_URL}/camera_proxy_stream/{entity_id}'
     client = httpx.AsyncClient(timeout=None)
-    request = client.build_request('GET', f'{HA_BASE_URL}/camera_proxy_stream/{entity_id}', headers=_get_headers())
+    request = client.build_request('GET', url, headers=_get_headers())
     response = await client.send(request, stream=True)
+
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(f"stream_camera: status={response.status_code}, "
+                f"content-type={response.headers.get('content-type')}, "
+                f"url={url}")
+
     return response
