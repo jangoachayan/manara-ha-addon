@@ -1,7 +1,8 @@
 import json
 from fastapi import APIRouter, Depends, HTTPException, Response
-from sqlmodel import Session
-from app.models.auth import PairRequest, TokenResponse
+from jose import JWTError
+from sqlmodel import Session, select
+from app.models.auth import PairRequest, RefreshRequest, TokenResponse
 from app.db.database import get_session
 from app.db.models import Device
 from app.core.pairing import (
@@ -10,7 +11,7 @@ from app.core.pairing import (
     create_pairing_code,
     generate_qr_code_image,
 )
-from app.core.security import create_access_token, create_refresh_token
+from app.core.security import decode_token, create_access_token, create_refresh_token
 from app.core.config import MANARA_TUNNEL_URL
 
 router = APIRouter(prefix='/auth', tags=['auth'])
@@ -52,3 +53,28 @@ async def qr(session: Session = Depends(get_session)) -> Response:
     png_bytes = generate_qr_code_image(json.dumps(qr_payload))
 
     return Response(content=png_bytes, media_type='image/png')
+
+
+@router.post('/refresh')
+async def refresh(request: RefreshRequest, session: Session = Depends(get_session)) -> TokenResponse:
+    try:
+        payload = decode_token(request.refresh_token)
+    except JWTError as e:
+        raise HTTPException(status_code=401, detail='Invalid or expired refresh token') from e
+
+    device_id = payload['sub']
+
+    statement = select(Device).where(Device.device_id == device_id)
+    device = session.execute(statement).scalar_one_or_none()
+    if device is None:
+        raise HTTPException(status_code=401, detail='Device not found')
+
+    new_access_token = create_access_token(data={'sub': device_id})
+    new_refresh_token = create_refresh_token(data={'sub': device_id})
+
+    return TokenResponse(
+        access_token=new_access_token,
+        refresh_token=new_refresh_token,
+        token_type='bearer',
+        expires_in=900,
+    )

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.13] - 2026-06-19
+
+### Fixed
+- Added missing POST /auth/refresh endpoint -- previously absent, causing
+  every 401 (e.g. on 15-minute access token expiry) to fail the Flutter
+  app's automatic refresh attempt with 404, clearing stored tokens and
+  forcing re-pairing. Mobile sessions should now persist correctly across
+  token expiry without manual re-pairing.
+
 ## [0.3.12] - 2026-06-19
 
 ### Added
