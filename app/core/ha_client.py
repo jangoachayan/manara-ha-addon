@@ -30,3 +30,9 @@ async def call_service(domain: str, service: str, entity_id: str) -> None:
             timeout=10.0,
         )
         response.raise_for_status()
+
+async def stream_camera(entity_id: str) -> httpx.Response:
+    client = httpx.AsyncClient(timeout=None)
+    request = client.build_request('GET', f'{HA_BASE_URL}/camera_proxy_stream/{entity_id}', headers=_get_headers())
+    response = await client.send(request, stream=True)
+    return response
