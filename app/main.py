@@ -16,9 +16,9 @@ from app.routers.ws import router as ws_router
 async def lifespan(app: FastAPI):
     init_db()
     asyncio.create_task(run_ha_websocket_listener())
-    zeroconf_instance = register_mdns_service()
+    zeroconf_instance = await register_mdns_service()
     yield
-    zeroconf_instance.close()
+    await zeroconf_instance.async_close()
 
 
 app = FastAPI(title="Manara HA Addon", lifespan=lifespan)
