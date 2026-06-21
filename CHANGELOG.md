@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.14] - 2026-06-19
+
+### Fixed
+- Added mDNS advertisement (_manara._tcp.local) via app/core/mdns.py, wired
+  into app startup. Previously the addon never advertised itself on the LAN,
+  so the mobile app's ConnectionResolver always fell back to the Cloudflare
+  tunnel even on the same network -- causing the camera stream's long-lived
+  MJPEG connection to hit Cloudflare's timeout (HTTP 524). LAN traffic
+  should now route directly, avoiding the tunnel entirely when on-site.
+
 ## [0.3.13] - 2026-06-19
 
 ### Fixed
