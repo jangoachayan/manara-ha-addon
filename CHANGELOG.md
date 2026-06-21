@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.10] - 2026-06-19
+
+### Added
+- Entity search filter in Manage Groups UI: per-group search input filters
+  the entity-assignment dropdown by substring match
+
 ## [0.3.9] - 2026-06-19
 
 ### Added
