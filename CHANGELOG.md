@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.15] - 2026-06-19
+
+### Fixed
+- Critical: mDNS registration was crashing the addon on every startup
+  (zeroconf._exceptions.EventLoopBlocked) because the synchronous
+  Zeroconf.register_service() call deadlocked when invoked from inside the
+  already-running FastAPI event loop. Switched to AsyncZeroconf's
+  async_register_service()/async_close(), which integrate correctly with
+  an existing event loop.
+
 ## [0.3.14] - 2026-06-19
 
 ### Fixed
